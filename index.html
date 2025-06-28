@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spelling Bee Helper</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; max-width: 600px; margin: auto; }
+    input { margin: 0.5em 0; width: 100%; padding: 0.5em; font-size: 1em; }
+    button { padding: 0.5em 1em; font-size: 1em; margin-top: 1em; }
+    ul { padding-left: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Spelling Bee Helper</h1>
+
+  <label>Allowed Letters (7 total):</label>
+  <input type="text" id="allowedLetters" placeholder="e.g. abcdefg" maxlength="7"/>
+
+  <label>Required Letter (center):</label>
+  <input type="text" id="requiredLetter" placeholder="e.g. a" maxlength="1"/>
+
+  <label>Word Length (optional):</label>
+  <input type="number" id="wordLength" min="1" placeholder="e.g. 5"/>
+
+  <label>Starts With (optional):</label>
+  <input type="text" id="startsWith" placeholder="e.g. br"/>
+
+  <button onclick="findWords()">Find Words</button>
+
+  <h2>Results:</h2>
+  <ul id="results"></ul>
+
+  <script src="words.js"></script>
+  <script>
+    function findWords() {
+      const allowed = document.getElementById('allowedLetters').value.toLowerCase();
+      const required = document.getElementById('requiredLetter').value.toLowerCase();
+      const length = parseInt(document.getElementById('wordLength').value) || null;
+      const starts = document.getElementById('startsWith').value.toLowerCase();
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+
+      if (allowed.length !== 7 || !required || !allowed.includes(required)) {
+        alert('Enter 7 allowed letters and a required letter that is one of them.');
+        return;
+      }
+
+      const matches = wordList.filter(word => {
+        if (!word.includes(required)) return false;
+        if (length && word.length !== length) return false;
+        if (starts && !word.startsWith(starts)) return false;
+        for (let char of word) {
+          if (!allowed.includes(char)) return false;
+        }
+        return true;
+      });
+
+      if (matches.length === 0) {
+        results.innerHTML = '<li>No words found</li>';
+      } else {
+        matches.forEach(w => {
+          const li = document.createElement('li');
+          li.textContent = w;
+          results.appendChild(li);
+        });
+      }
+    }
+  </script>
+</body>
+</html>
